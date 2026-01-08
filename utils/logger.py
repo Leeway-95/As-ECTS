@@ -1,5 +1,4 @@
 import logging
-import sys
 from pathlib import Path
 from logging.handlers import TimedRotatingFileHandler
 from datetime import datetime
@@ -71,26 +70,7 @@ class EnhancedColoredLogger:
         # Add handlers
         self.logger.addHandler(console_handler)
         self.logger.addHandler(file_handler)
-        
-        # Log system initialization
-        self._log_system_info("initialized")
-    
-    def _log_system_info(self, event: str):
-        """Log system information"""
-        import platform
-        try:
-            system_info = {
-                "event": event,
-                "logger_name": self.name,
-                "python_version": sys.version,
-                "platform": platform.platform(),
-                "processor": platform.processor(),
-                "timestamp": datetime.now().isoformat()
-            }
-            self.logger.info(f" System {event}: {system_info}")
-        except Exception as e:
-            self.logger.info(f" Logger {event} (system info unavailable: {e})")
-    
+
     def debug(self, message: str, extra: Optional[Dict] = None):
         """Debug logging with extra context"""
         self._log_with_context("debug", message, extra)
@@ -116,16 +96,6 @@ class EnhancedColoredLogger:
     def suppress_console_output(self, suppress: bool = True):
         """Control whether to suppress console output"""
         self._suppress_console_output = suppress
-    
-    @contextmanager
-    def console_output_suppressed(self):
-        """Context manager to temporarily suppress console output"""
-        old_suppress = self._suppress_console_output
-        self._suppress_console_output = True
-        try:
-            yield
-        finally:
-            self._suppress_console_output = old_suppress
     
     def _should_suppress_message(self, message: str, level: str) -> bool:
         """Check if message should be suppressed based on patterns and settings"""
@@ -218,29 +188,7 @@ class EnhancedColoredLogger:
                 getattr(self.logger, level)(emoji_message, exc_info=True)
             else:
                 getattr(self.logger, level)(emoji_message)
-    
-    def log_operation_start(self, operation: str, details: Optional[Dict] = None):
-        """Log operation start with context"""
-        details_str = f" ({details})" if details else ""
-        self.info(f" Starting operation: {operation}{details_str}", extra={"operation": operation, "stage": "start"})
-    
-    def log_operation_end(self, operation: str, success: bool = True, details: Optional[Dict] = None):
-        """Log operation end with context"""
-        status_icon = "✅" if success else ""
-        status_text = "completed successfully" if success else "failed"
-        details_str = f" ({details})" if details else ""
-        self.info(f"{status_icon} Operation {operation} {status_text}{details_str}", extra={"operation": operation, "stage": "end", "success": success})
-    
-    def log_metrics(self, metrics: Dict[str, Any], context: str = "system"):
-        """Log metrics with structured format"""
-        metrics_text = ", ".join([f"{k}: {v}" for k, v in metrics.items()])
-        self.info(f" Metrics [{context}]: {metrics_text}", extra={"metrics": metrics, "context": context})
-    
-    def log_performance(self, operation: str, duration: float, success: bool = True):
-        """Log performance metrics"""
-        status_icon = "✅" if success else ""
-        self.info(f"{status_icon} Performance - {operation}: {duration:.3f}s", extra={"operation": operation, "duration": duration, "success": success})
-    
+
     def create_log_summary(self) -> Dict[str, Any]:
         """Create comprehensive log summary"""
         summary = {
@@ -257,40 +205,6 @@ class EnhancedColoredLogger:
         
         self.info(f" Log summary generated: {summary['total_logs']} entries, {summary['error_count']} errors, {summary['warning_count']} warnings")
         return summary
-    
-    def print_log_summary(self):
-        """Print formatted log summary to console"""
-        summary = self.create_log_summary()
-        
-        # Create rich table
-        table = Table(title=f" Log Summary for {self.name}", show_header=True, header_style="bold magenta")
-        table.add_column("Metric", style="cyan")
-        table.add_column("Value", style="green")
-        
-        table.add_row("Total Logs", str(summary["total_logs"]))
-        table.add_row("Errors", str(summary["error_count"]))
-        table.add_row("Warnings", str(summary["warning_count"]))
-        table.add_row("Uptime", f"{summary['uptime_seconds']:.1f} seconds")
-        
-        self.console.print(table)
-        
-        # Recent errors and warnings
-        if summary["recent_errors"]:
-            error_panel = Panel(
-                "\n".join([f" {entry['timestamp']}: {entry['message']}" for entry in summary["recent_errors"]]),
-                title="Recent Errors",
-                border_style="red"
-            )
-            self.console.print(error_panel)
-        
-        if summary["recent_warnings"]:
-            warning_panel = Panel(
-                "\n".join([f" {entry['timestamp']}: {entry['message']}" for entry in summary["recent_warnings"]]),
-                title="Recent Warnings",
-                border_style="yellow"
-            )
-            self.console.print(warning_panel)
-
 
 class EnhancedProgressManager:
     """Progress manager with improved logging integration"""
@@ -305,17 +219,14 @@ class EnhancedProgressManager:
         try:
             from utils.progress_utils import EnhancedProgressManager as ProgressUtilsManager
             self._progress_manager = ProgressUtilsManager(logger_instance)
-            self.logger.info(" Using progress manager from progress_utils")
         except ImportError:
             self._progress_manager = None
-            self.logger.info(" Using fallback progress manager")
     
     def start_main_progress(self, total: int, description: str = "Processing") -> str:
         """Start main progress bar with styling and logging"""
         if self._progress_manager:
             return self._progress_manager.start_main_progress(total, description)
-        
-        # Fallback implementation
+
         self.logger.info(f" Starting progress: {description} (total: {total})")
         self.progress = Progress(
             SpinnerColumn(),

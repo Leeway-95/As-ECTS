@@ -19,7 +19,7 @@ MATRIX_CONFIG = {
     "matrix_logs_dir": str(MATRIX_LOGS_DIR),
 }
 
-# Forest parameters - Optimized for better performance
+# Forest parameters
 FOREST_CONFIG = {
     "n_trees": 100,
     "max_depth": 25,
@@ -30,7 +30,7 @@ FOREST_CONFIG = {
     "info_gain_threshold": 0.05,
 }
 
-# Early classification parameters - Optimized for better earliness
+# Early classification parameters
 EARLY_CONFIG = {
     "early_match_threshold": 0.85,
     "max_lookback": 10,

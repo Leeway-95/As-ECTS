@@ -649,24 +649,6 @@ class ShapeletForest:
         logger.info(f"Forest statistics: {stats}")
         return stats
     
-    def visualize_forest(self, output_dir: str, max_trees: int = 3):
-        """ Visualize forest trees
-        
-        Args:
-            output_dir: Output directory for visualizations
-            max_trees: Maximum number of trees to visualize
-        """
-        output_dir = Path(output_dir)
-        output_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Visualize top-performing trees
-        sorted_trees = sorted(self.trees, key=lambda t: self.tree_scores.get(t.tree_id, 0), reverse=True)
-        
-        for i, tree in enumerate(sorted_trees[:max_trees]):
-            output_path = output_dir / f"tree_{tree.tree_id}.png"
-            tree.visualize_tree(str(output_path))
-            logger.info(f"Visualized tree {tree.tree_id}")
-    
     def get_tree_by_id(self, tree_id: int) -> Optional[ShapeletTree]:
         """Get tree by ID"""
         for tree in self.trees:

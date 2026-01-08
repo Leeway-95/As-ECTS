@@ -97,8 +97,7 @@ class EvaluationPhase:
         return elapsed_time
 
 class AsEctsSystem:
-    """As-ECTS system with optimized training-evaluation flow"""
-    
+
     def __init__(self, config: Dict[str, Any]):
         """ Initialize As-ECTS system with configuration
         
@@ -897,19 +896,9 @@ class AsEctsSystem:
             if not top_trees:
                 logger.warning(f"No trees available for visualization for {dataset_name}")
                 return []
-            
-            # Generate tree visualizations
+
             viz_files = []
-            for i, tree_data in enumerate(top_trees):
-                try:
-                    tree_viz_file = self._generate_tree_visualization(dataset_name, tree_data, i)
-                    if tree_viz_file:
-                        viz_files.append(tree_viz_file)
-                except Exception as e:
-                    logger.warning(f" Failed to visualize tree {i}: {e}")
-                    continue
-            
-            logger.info(f"✅ Generated {len(viz_files)} tree visualizations for {dataset_name}")
+            logger.info(f" Tree visualization functionality disabled for {dataset_name}")
             return viz_files
             
         except Exception as e:
@@ -950,8 +939,6 @@ class AsEctsSystem:
     def _get_top_trees(self, dataset_name: str, top_k: int) -> List[Dict[str, Any]]:
         """ Get top performing trees for visualization """
         try:
-            # For now, return placeholder data
-            # In a full implementation, this would analyze tree performance
             top_trees = []
             
             for i in range(min(top_k, len(self.forest.trees) if hasattr(self.forest, 'trees') else 0)):
@@ -968,103 +955,6 @@ class AsEctsSystem:
         except Exception as e:
             logger.error(f"Error getting top trees: {e}")
             return []
-    
-    def _generate_tree_visualization(self, dataset_name: str, tree_data: Dict[str, Any], index: int) -> Optional[str]:
-        """ Generate visualization for a single tree with actual tree structure """
-        try:
-            viz_file = f"tree_{dataset_name}_{index}.png"
-            viz_path = Path(self.config.get("visualization", {}).get("output_dir", "./results/visualizations")) / viz_file
-            
-            # Create a proper decision tree visualization
-            import matplotlib.pyplot as plt
-            import numpy as np
-            from matplotlib.patches import Rectangle, Circle
-            import matplotlib.patches as mpatches
-            
-            fig, ax = plt.subplots(figsize=(12, 8))
-            
-            # Create a hierarchical tree structure
-            def draw_node(x, y, width, height, text, node_type="decision"):
-                """Draw a tree node"""
-                if node_type == "decision":
-                    # Decision node - rectangle
-                    rect = Rectangle((x - width/2, y - height/2), width, height, 
-                                   facecolor='lightblue', edgecolor='navy', linewidth=2)
-                    ax.add_patch(rect)
-                else:
-                    # Leaf node - circle
-                    circle = Circle((x, y), width/2, facecolor='lightgreen', 
-                                  edgecolor='darkgreen', linewidth=2)
-                    ax.add_patch(circle)
-                
-                # Add text
-                ax.text(x, y, text, ha='center', va='center', fontsize=10, fontweight='bold')
-            
-            def draw_connection(x1, y1, x2, y2):
-                """Draw connection between nodes"""
-                ax.plot([x1, x2], [y1, y2], 'k-', linewidth=2)
-            
-            # Root node
-            root_x, root_y = 0.5, 0.8
-            draw_node(root_x, root_y, 0.3, 0.1, 
-                     f"Tree {index}\nNodes: {tree_data.get('nodes', 0)}", "decision")
-            
-            # Level 1 nodes
-            left_x, left_y = 0.2, 0.5
-            right_x, right_y = 0.8, 0.5
-            
-            draw_node(left_x, left_y, 0.25, 0.08, "Shapelet\nSimilarity", "decision")
-            draw_node(right_x, right_y, 0.25, 0.08, "Distance\nThreshold", "decision")
-            
-            # Connections from root
-            draw_connection(root_x, root_y - 0.05, left_x, left_y + 0.05)
-            draw_connection(root_x, root_y - 0.05, right_x, right_y + 0.05)
-            
-            # Level 2 nodes (leaf nodes)
-            ll_x, ll_y = 0.05, 0.2
-            lr_x, lr_y = 0.35, 0.2
-            rl_x, rl_y = 0.65, 0.2
-            rr_x, rr_y = 0.95, 0.2
-            
-            draw_node(ll_x, ll_y, 0.2, 0.08, "Class A\nHigh Sim", "leaf")
-            draw_node(lr_x, lr_y, 0.2, 0.08, "Class B\nLow Sim", "leaf")
-            draw_node(rl_x, rl_y, 0.2, 0.08, "Class C\nMid Sim", "leaf")
-            draw_node(rr_x, rr_y, 0.2, 0.08, "Class D\nVar Sim", "leaf")
-            
-            # Connections from level 1
-            draw_connection(left_x, left_y - 0.05, ll_x, ll_y + 0.05)
-            draw_connection(left_x, left_y - 0.05, lr_x, lr_y + 0.05)
-            draw_connection(right_x, right_y - 0.05, rl_x, rl_y + 0.05)
-            draw_connection(right_x, right_y - 0.05, rr_x, rr_y + 0.05)
-            
-            # Add title and metadata
-            ax.set_title(f'Shapelet Decision Tree {index} - {dataset_name}', 
-                        fontsize=14, fontweight='bold')
-            
-            ax.text(0.5, 0.05, 
-                   f'Nodes: {tree_data.get("nodes", 0)} | Depth: {tree_data.get("depth", 0)} | Score: {tree_data.get("score", 0):.3f}',
-                   ha='center', va='center', fontsize=10, style='italic')
-            
-            # Add legend
-            legend_elements = [
-                mpatches.Patch(color='lightblue', label='Decision Node'),
-                mpatches.Patch(color='lightgreen', label='Leaf Node')
-            ]
-            ax.legend(handles=legend_elements, loc='upper right')
-            
-            ax.set_xlim(-0.1, 1.1)
-            ax.set_ylim(-0.1, 0.9)
-            ax.axis('off')
-            
-            viz_path.parent.mkdir(parents=True, exist_ok=True)
-            plt.savefig(viz_path, dpi=300, bbox_inches='tight', facecolor='white')
-            plt.close()
-            
-            return str(viz_path)
-            
-        except Exception as e:
-            logger.error(f"Error generating tree visualization: {e}")
-            return None
 
 def create_ects_system(config: Dict[str, Any]) -> AsEctsSystem:
     """Factory function to create As-ECTS system"""
