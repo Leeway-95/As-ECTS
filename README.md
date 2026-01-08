@@ -20,19 +20,19 @@ These limitations pose two primary challenges: (1) Adaptive stream modeling; (2)
 a shapelet-cache matcher to avoid exhaustive searches over opaque candidates for efficient and interpretable ECTS. 
 
 ## Dependencies
-* Python 3.12
-* numpy>=1.21.0
-* pandas>=1.3.0
-* scipy>=1.7.0
-* scikit-learn>=1.0.0
-* fastdtw>=0.3.4
-* pybaobabdt>=1.0.0
+* Python 3.10
+* numpy 2.2.6
+* pandas 2.3.3
+* scipy 1.15.3
+* scikit-learn 1.7.2
+* fastdtw 0.3.4
+* pybaobabdt 1.0.1
 
 ## Usages
 ```bash
 > git clone https://github.com/Leeway-95/As-ECTS.git
 > cd As-ECTS
-> conda create -n As-ECTS python=3.12 -y && conda activate As-ECTS && pip install -r requirements.txt
+> conda create -n As-ECTS python=3.10 -y && conda activate As-ECTS && pip install -r requirements.txt
 > python main.py
 ```
 
