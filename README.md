@@ -14,10 +14,9 @@ InfTS-LLM can be directly applied to any LLMs without retraining:
 -->
 
 ## Abstract
-Early Classification of Time Series (ECTS) aims to predict the class before a sequence is completely observed, which is critical for real-world applications such as time-sensitive medical diagnostics. However, existing ECTS methods typically balance earliness and accuracy under finite-length inputs with limited interpretability for decision-making.
+Early Classification of Time Series (ECTS) aims to predict class labels before temporal sequences are completely observed, which is crucial for real-world applications such as time-sensitive medical diagnostics. However, existing ECTS methods typically balance earliness and accuracy under finite-length inputs with limited interpretability for decision-making.
 These limitations pose two primary challenges: (1) Adaptive stream modeling; (2) Efficient and interpretable ECTS. 
-**As-ECTS** solves the two challenges and achieves competitive performance, which consists of two main components: (a) A Shapelet Similarity Matrix is constructed based on shapelet similarity, where shapelets are critical subsequences to capture distribution changes over streaming time series. This matrix is then incrementally updated through attention-enhanced evaluation for adaptive stream modeling. (b) An Early Shapelet Classifier learns interpretable shapelets and identifies their category through
-a shapelet-cache matcher to avoid exhaustive searches over opaque candidates for efficient and interpretable ECTS. 
+**As-ECTS** solves the two challenges and achieves competitive performance, which consists of two main components: (a) A Shapelet Similarity Matrix is constructed based on shapelet similarity, where shapelets are critical subsequences to capture distribution changes over streaming time series. This matrix is then incrementally updated through attention-enhanced evaluation for adaptive stream modeling. (b) An Early Shapelet Classifier learns interpretable shapelets and identifies their class via a shapelet-cache matcher, avoiding exhaustive searches over opaque candidates for efficient and interpretable ECTS.
 
 ## Dependencies
 * Python 3.10
