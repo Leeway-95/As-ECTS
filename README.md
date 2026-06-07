@@ -1,6 +1,4 @@
-<div align="center">
-  <h2><b> As-ECTS: Adaptive Shapelet Learning for Early Classification of Streaming Time Series </b></h2>
-</div>
+# As-ECTS: Adaptive Shapelet Learning for Early Classification of Streaming Time Series
 
 [![GitHub Stars](https://img.shields.io/github/stars/Leeway-95/As-ECTS?style=social)](https://github.com/Leeway-95/As-ECTS/stargazers)
 ![Topic](https://img.shields.io/badge/Streaming%20Time%20Series%20-%20Early%20Classification-blueviolet)
@@ -40,5 +38,7 @@ These limitations pose two primary challenges: (1) Adaptive stream modeling; (2)
 2. UCR datasets can be downloaded from [UCRArchive_2018.zip](https://www.cs.ucr.edu/~eamonn/time_series_data_2018/UCRArchive_2018.zip).
 3. PTB-XL datasets can be downloaded from [PTB-XL-1.0.3.zip](https://physionet.org/content/ptb-xl/get-zip/1.0.3/).
 
+<!--
 ## Contact Us
 For inquiries or further assistance, please contact us at [leeway@ruc.edu.cn](mailto:leeway@ruc.edu.cn).
+-->
